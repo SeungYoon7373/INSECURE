@@ -1,0 +1,77 @@
+apt update
+apt install vim net-tools git -y
+apt install apache2 mariadb-server mariadb-client -y
+mysql_secure_installation
+
+n
+y
+n
+n
+y
+mysql -u root -p
+grant all privileges on *.* to 'root'@'localhost' identified by 'root';
+flush privileges;
+
+Show Variables like '%general%';
+vim /etc/mysql/mariadb.conf.d/50-server.cnf
+/general
+주석 제거
+systemctl restart mariadb.service
+apt install php php-gd php-mysql -y
+vim /etc/apache2/mods-available/php7.4.conf
+php_admin_flag engine On
+vim /etc/php/7.4/apache2/php.ini
+short_open_tag = On
+systemctl restart apache2
+cd /var/www/html
+git clone https://github.com/SeungYoon7373/INSECURE.git
+mv INSECURE/insecure/ .
+chown www-data: insecure
+rm -R INSECURE
+
+mysql -u root -p
+
+create database webtest;
+use webtest;
+create table members(
+idx int not null auto_increment,
+id varchar(30),
+password varchar(100),
+name varchar(50),
+email varchar(30),
+company varchar(30),
+primary key(idx)
+)DEFAULT CHARSET = utf8;
+create table insecure_board(
+idx int not null auto_increment,
+title varchar(50),
+content text,
+id varchar(20),
+writer varchar(30),
+password varchar(50),
+file varchar(50),
+regdate date,
+secret varchar(2),
+primary key(idx)
+)DEFAULT CHARSET = utf8;
+create table customer_info(idx int, id varchar(15), password varchar(30), jumin varchar(15));
+insert into customer_info values(1, 'admin', '@dmin!q@w#e', '810203-1023113');
+insert into customer_info values(2, 'gugucon', '99c0n', '861121-1244251');
+insert into customer_info values(3, 'sonata_zzang', 'sosohan123', '890912-1601812');
+insert into customer_info values(4, 'halls', 'halls920912', '921001-1881222');
+insert into customer_info values(5, 'tkworld', '1q2w3e4r', '870405-1285264');
+
+apt install openssl -y
+
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
+
+a2enmod ssl
+a2ensite default-ssl
+
+vim /etc/apache2/sites-available/default-ssl.conf
+SSLEngine on
+SSLCertificateFile /etc/ssl/certs/server.crt
+SSLCertificateKeyFile /etc/ssl/private/server.key
+systemctl restart apache2
+
+https://~/insecure
